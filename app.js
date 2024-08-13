@@ -6,6 +6,8 @@ const cors = require("cors");
 const app = express();
 const port = 5000;
 
+const patients = require("./routes/patients");
+
 app.use(express.json());
 // allow cors requests from any origin and with credentials
 app.use(
@@ -16,6 +18,7 @@ app.use(
 );
 
 app.get("/node", (req, res) => res.send("Hello World"));
+app.use("/api/patients", patients);
 
 const startConnection = async () => {
   try {
