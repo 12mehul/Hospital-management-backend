@@ -2,11 +2,20 @@ require("dotenv").config();
 const express = require("express");
 const connectToDB = require("./db/db");
 const cors = require("cors");
+const cron = require("node-cron");
 
 const app = express();
 const port = 5000;
 
 const patients = require("./routes/patients");
+const slots = require("./routes/slots");
+const { slotsDateUpdate } = require("./controllers/slots");
+
+// Schedule the function to run every day
+cron.schedule("0 0 * * *", async () => {
+  console.log("Running slots update date...");
+  await slotsDateUpdate(); // Runs at 12:00 AM every day.
+});
 
 app.use(express.json());
 // allow cors requests from any origin and with credentials
@@ -19,6 +28,7 @@ app.use(
 
 app.get("/node", (req, res) => res.send("Hello World"));
 app.use("/api/patients", patients);
+app.use("/api/slots", slots);
 
 const startConnection = async () => {
   try {
