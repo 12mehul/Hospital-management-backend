@@ -7,7 +7,9 @@ const cron = require("node-cron");
 const app = express();
 const port = 5000;
 
+const accounts = require("./routes/accounts");
 const patients = require("./routes/patients");
+const doctors = require("./routes/doctors");
 const slots = require("./routes/slots");
 const { slotsDateUpdate } = require("./controllers/slots");
 
@@ -27,7 +29,9 @@ app.use(
 );
 
 app.get("/node", (req, res) => res.send("Hello World"));
+app.use("/api/accounts", accounts);
 app.use("/api/patients", patients);
+app.use("/api/doctors", doctors);
 app.use("/api/slots", slots);
 
 const startConnection = async () => {
