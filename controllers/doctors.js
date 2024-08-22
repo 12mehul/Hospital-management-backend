@@ -5,26 +5,28 @@ const Account = require("../models/accounts");
 const registration = async (req, res) => {
   try {
     const {
-      name,
+      firstName,
+      lastName,
       email,
       password,
       specialization,
       experience,
       dob,
-      age,
+      licenseNumber,
       gender,
       fullAddress,
       phone,
     } = req.body;
 
     if (
-      !name ||
+      !firstName ||
+      !lastName ||
       !email ||
       !password ||
       !specialization ||
       !experience ||
       !dob ||
-      !age ||
+      !licenseNumber ||
       !gender ||
       !fullAddress ||
       !phone
@@ -41,13 +43,14 @@ const registration = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const user = await Doctor.create({
-      name,
+      firstName,
+      lastName,
       email,
       password: hashedPassword,
       specialization,
       experience,
       dob,
-      age,
+      licenseNumber,
       gender,
       fullAddress,
       phone,
