@@ -62,9 +62,9 @@ const registration = async (req, res) => {
 
 const getAllPatients = async (req, res) => {
   try {
-    const { patientID } = req.query;
+    const { doctorId } = req.query;
     // Explicitly use the $in operator to match doctorId in the doctor_ids array
-    const patients = await Patient.findOne({ patientID });
+    const patients = await Patient.find({ doctor_ids: { $in: [doctorId] } });
     return res.status(200).json({ patients });
   } catch (err) {
     res.status(500).json({ msg: "Internal server error" });
