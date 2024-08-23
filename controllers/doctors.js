@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const Doctor = require("../models/doctors");
 const Account = require("../models/accounts");
+const doctorUniqueId = require("../autoGenerateId/doctorUniqueId");
 
 const registration = async (req, res) => {
   try {
@@ -39,10 +40,13 @@ const registration = async (req, res) => {
       return res.status(403).json({ msg: "Email already exist" });
     }
 
+    const doctorID = await doctorUniqueId(res);
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const user = await Doctor.create({
+      doctorID,
       firstName,
       lastName,
       email,
