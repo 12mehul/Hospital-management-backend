@@ -1,18 +1,27 @@
 const bcrypt = require("bcryptjs");
 const Patient = require("../models/patients");
 const Account = require("../models/accounts");
+const patientUniqueId = require("../autoGenerateId/patientUniqueId");
 
 const registration = async (req, res) => {
   try {
-    const { name, email, password, dob, age, gender, fullAddress, phone } =
-      req.body;
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      dob,
+      gender,
+      fullAddress,
+      phone,
+    } = req.body;
 
     if (
-      !name ||
+      !firstName ||
+      !lastName ||
       !email ||
       !password ||
       !dob ||
-      !age ||
       !gender ||
       !fullAddress ||
       !phone
@@ -25,15 +34,18 @@ const registration = async (req, res) => {
       return res.status(403).json({ msg: "Email already exist" });
     }
 
+    const patientID = await patientUniqueId(res);
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const user = await Patient.create({
-      name,
+      patientID,
+      firstName,
+      lastName,
       email,
       password: hashedPassword,
       dob,
-      age,
       gender,
       fullAddress,
       phone,
@@ -50,9 +62,9 @@ const registration = async (req, res) => {
 
 const getAllPatients = async (req, res) => {
   try {
-    const { doctorId } = req.query;
+    const { patientID } = req.query;
     // Explicitly use the $in operator to match doctorId in the doctor_ids array
-    const patients = await Patient.find({ doctor_ids: { $in: [doctorId] } });
+    const patients = await Patient.findOne({ patientID });
     return res.status(200).json({ patients });
   } catch (err) {
     res.status(500).json({ msg: "Internal server error" });
