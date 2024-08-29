@@ -72,7 +72,10 @@ const getProfile = async (req, res) => {
       const { password, ...data } = patient.toJSON();
       profileData = data;
     } else if (user.role === "doctor") {
-      const doctor = await Doctor.findById(_id);
+      const doctor = await Doctor.findById(_id).populate({
+        path: "specializationId",
+        select: "_id title",
+      });
       const { password, ...data } = doctor.toJSON();
       profileData = data;
     } else {
@@ -85,7 +88,47 @@ const getProfile = async (req, res) => {
   }
 };
 
+const updateProfile = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await Account.findOne({ userId: id });
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    let data;
+    let hashedPassword;
+    if (req.body.password) {
+      const salt = await bcrypt.genSalt(10);
+      hashedPassword = await bcrypt.hash(req.body.password, salt);
+    }
+
+    if (user.role === "patient") {
+      const patient = await Patient.findOneAndUpdate(
+        { _id: id },
+        { ...req.body, password: hashedPassword },
+        { new: true, runValidators: true }
+      );
+      data = patient;
+    } else if (user.role === "doctor") {
+      const doctor = await Doctor.findOneAndUpdate(
+        { _id: id },
+        { ...req.body, password: hashedPassword },
+        { new: true, runValidators: true }
+      );
+      data = doctor;
+    } else {
+      return res.status(400).json({ msg: "Invalid user role" });
+    }
+    return res.status(200).json({ msg: "Profile updated successfully", data });
+  } catch (err) {
+    res.status(500).json({ msg: "Internal server error" });
+  }
+};
+
 module.exports = {
   login,
   getProfile,
+  updateProfile,
 };
