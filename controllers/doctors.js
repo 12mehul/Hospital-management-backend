@@ -10,7 +10,7 @@ const registration = async (req, res) => {
       lastName,
       email,
       password,
-      specialization,
+      specializationId,
       experience,
       dob,
       licenseNumber,
@@ -24,7 +24,7 @@ const registration = async (req, res) => {
       !lastName ||
       !email ||
       !password ||
-      !specialization ||
+      !specializationId ||
       !experience ||
       !dob ||
       !licenseNumber ||
@@ -51,7 +51,7 @@ const registration = async (req, res) => {
       lastName,
       email,
       password: hashedPassword,
-      specialization,
+      specializationId,
       experience,
       dob,
       licenseNumber,

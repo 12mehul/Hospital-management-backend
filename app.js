@@ -11,6 +11,7 @@ const accounts = require("./routes/accounts");
 const patients = require("./routes/patients");
 const doctors = require("./routes/doctors");
 const slots = require("./routes/slots");
+const speciality = require("./routes/speciality");
 const { slotsDateUpdate } = require("./controllers/slots");
 
 // Schedule the function to run every day
@@ -33,6 +34,7 @@ app.use("/api/accounts", accounts);
 app.use("/api/patients", patients);
 app.use("/api/doctors", doctors);
 app.use("/api/slots", slots);
+app.use("/api/speciality", speciality);
 
 const startConnection = async () => {
   try {
