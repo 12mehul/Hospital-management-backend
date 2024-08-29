@@ -71,7 +71,10 @@ const registration = async (req, res) => {
 
 const getAllDoctors = async (req, res) => {
   try {
-    const doctors = await Doctor.find();
+    const doctors = await Doctor.find({}, { password: 0 }).populate({
+      path: "specializationId",
+      select: "_id title",
+    });
     return res.status(200).json({ doctors });
   } catch (err) {
     res.status(500).json({ msg: "Internal server error" });
