@@ -1,9 +1,12 @@
+const moment = require("moment");
 const Slot = require("../models/slots");
 
 const createSlot = async (req, res) => {
   try {
     const { date, time, doctorId } = req.body;
-    await Slot.create({ date, time, doctorId });
+    // Format the time using moment
+    const formattedTime = moment(time, ["h:mm A"]).format("hh:mm A");
+    await Slot.create({ date, time: formattedTime, doctorId });
     res.status(201).json({ msg: "Slots created successfully." });
   } catch (err) {
     res.status(500).json({ msg: "Internal server error" });
@@ -12,7 +15,7 @@ const createSlot = async (req, res) => {
 
 const getSlots = async (req, res) => {
   try {
-    const { doctorId } = req.body;
+    const { doctorId } = req.query;
     const slots = await Slot.find({ doctorId });
     res.status(200).json({ slots });
   } catch (err) {

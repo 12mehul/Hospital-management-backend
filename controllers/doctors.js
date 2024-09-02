@@ -71,7 +71,9 @@ const registration = async (req, res) => {
 
 const getAllDoctors = async (req, res) => {
   try {
-    const doctors = await Doctor.find({}, { password: 0 }).populate({
+    const { specializationId } = req.query;
+    const query = specializationId ? { specializationId } : {};
+    const doctors = await Doctor.find(query, { password: 0 }).populate({
       path: "specializationId",
       select: "_id title",
     });
