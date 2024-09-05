@@ -3,6 +3,8 @@ const express = require("express");
 const connectToDB = require("./db/db");
 const cors = require("cors");
 const cron = require("node-cron");
+const swaggerUI = require("swagger-ui-express");
+const swaggerSpec = require("./swagger");
 
 const app = express();
 const port = 5000;
@@ -12,6 +14,7 @@ const patients = require("./routes/patients");
 const doctors = require("./routes/doctors");
 const slots = require("./routes/slots");
 const speciality = require("./routes/speciality");
+const appointments = require("./routes/appointments");
 const { slotsDateUpdate } = require("./controllers/slots");
 
 // Schedule the function to run every day
@@ -29,12 +32,16 @@ app.use(
   })
 );
 
+// Serve Swagger documentation
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
+
 app.get("/node", (req, res) => res.send("Hello World"));
 app.use("/api/accounts", accounts);
 app.use("/api/patients", patients);
 app.use("/api/doctors", doctors);
 app.use("/api/slots", slots);
 app.use("/api/speciality", speciality);
+app.use("/api/appointments", appointments);
 
 const startConnection = async () => {
   try {

@@ -66,7 +66,7 @@ const getAllPatients = async (req, res) => {
     // Explicitly use the $in operator to match doctorId in the doctor_ids array
     const patients = await Patient.find(
       { doctor_ids: { $in: [doctorId] } },
-      { password: 0 }
+      { password: 0, doctor_ids: 0 }
     );
     return res.status(200).json({ patients });
   } catch (err) {
