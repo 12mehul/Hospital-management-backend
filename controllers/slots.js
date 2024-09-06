@@ -16,8 +16,110 @@ const createSlot = async (req, res) => {
 const getSlots = async (req, res) => {
   try {
     const { doctorId } = req.query;
-    const slots = await Slot.find({ doctorId });
-    res.status(200).json({ slots });
+
+    Slot.aggregate([
+      { $match: { doctorId } },
+      // First stage: Compute formattedDate and convertedTime
+      {
+        $project: {
+          _id: 1,
+          doctorId: 1,
+          date: 1,
+          time: 1,
+          isAvailable: 1,
+          formattedDate: {
+            $dateToString: { format: "%Y-%m-%d", date: "$date" },
+          },
+          // Convert AM/PM time to 24-hour format
+          convertedTime: {
+            $let: {
+              vars: {
+                timeParts: { $split: ["$time", " "] }, // Split time and AM/PM
+                hourMinute: { $substr: ["$time", 0, 5] }, // Extract 'hh:mm'
+              },
+              in: {
+                $let: {
+                  vars: {
+                    hour: { $toInt: { $substr: ["$$hourMinute", 0, 2] } },
+                    minute: { $substr: ["$$hourMinute", 3, 2] },
+                    ampm: { $arrayElemAt: ["$$timeParts", 1] },
+                  },
+                  in: {
+                    $cond: [
+                      { $eq: ["$$ampm", "PM"] },
+                      {
+                        $concat: [
+                          {
+                            $toString: {
+                              $cond: [
+                                { $eq: ["$$hour", 12] },
+                                12,
+                                { $add: ["$$hour", 12] },
+                              ],
+                            },
+                          },
+                          ":",
+                          "$$minute",
+                        ],
+                      },
+                      {
+                        $concat: [
+                          {
+                            $toString: {
+                              $cond: [
+                                { $eq: ["$$hour", 12] },
+                                "00",
+                                {
+                                  $cond: [
+                                    { $lt: ["$$hour", 10] },
+                                    { $concat: ["0", { $toString: "$$hour" }] },
+                                    { $toString: "$$hour" },
+                                  ],
+                                },
+                              ],
+                            },
+                          },
+                          ":",
+                          "$$minute",
+                        ],
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      // Second stage: Combine formattedDate and convertedTime
+      {
+        $sort: {
+          formattedDate: 1,
+          convertedTime: 1,
+        },
+      },
+      {
+        $project: {
+          doctorId: 1,
+          date: 1,
+          time: 1,
+          isAvailable: 1,
+          // formattedDate: 1,
+          // convertedTime: 1,
+          combinedDateTime: {
+            $concat: [
+              "$formattedDate",
+              " ",
+              { $ifNull: ["$convertedTime", "Invalid Time"] },
+            ],
+          },
+        },
+      },
+    ])
+      .exec()
+      .then((slots) => {
+        res.status(200).json({ slots });
+      });
   } catch (err) {
     res.status(500).json({ msg: "Internal server error" });
   }

@@ -67,6 +67,26 @@ const getAllPatients = async (req, res) => {
     const patients = await Patient.find(
       { doctor_ids: { $in: [doctorId] } },
       { password: 0, doctor_ids: 0 }
+    ).sort({ createdAt: -1 });
+    return res.status(200).json({ patients });
+  } catch (err) {
+    res.status(500).json({ msg: "Internal server error" });
+  }
+};
+
+const searchPatient = async (req, res) => {
+  try {
+    const { name } = req.query;
+    const regex = new RegExp(name, "i");
+    const patientID = Number(name);
+    const patients = await Patient.find(
+      {
+        $or: [
+          { firstName: { $regex: regex } },
+          { patientID: !isNaN(patientID) ? patientID : null },
+        ],
+      },
+      { _id: 1, firstName: 1, lastName: 1, patientID: 1 }
     );
     return res.status(200).json({ patients });
   } catch (err) {
@@ -77,4 +97,5 @@ const getAllPatients = async (req, res) => {
 module.exports = {
   registration,
   getAllPatients,
+  searchPatient,
 };
