@@ -50,6 +50,7 @@ const getAppointments = async (req, res) => {
     }
 
     const appointments = await Appointment.find(query)
+      .sort({ createdAt: -1 })
       .populate({
         path: "specializationId",
         select: "_id title",
