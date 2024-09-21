@@ -69,7 +69,7 @@ const getProfile = async (req, res) => {
 
     if (user.role === "patient") {
       const patient = await Patient.findById(_id);
-      const { password, ...data } = patient.toJSON();
+      const { password, doctor_ids, ...data } = patient.toJSON();
       profileData = data;
     } else if (user.role === "doctor") {
       const doctor = await Doctor.findById(_id).populate({
