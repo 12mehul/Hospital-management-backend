@@ -2,9 +2,9 @@ require("dotenv").config();
 const express = require("express");
 const connectToDB = require("./db/db");
 const cors = require("cors");
-const cron = require("node-cron");
-const swaggerUI = require("swagger-ui-express");
-const swaggerSpec = require("./swagger");
+// const cron = require("node-cron");
+// const swaggerUI = require("swagger-ui-express");
+// const swaggerSpec = require("./swagger");
 
 const app = express();
 const port = 5000;
@@ -36,7 +36,7 @@ app.use(
 app.use(express.json());
 
 // Serve Swagger documentation
-app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
+// app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 app.get("/node", (req, res) => res.send("Hello Hospital Management App"));
 app.use("/api/accounts", accounts);
