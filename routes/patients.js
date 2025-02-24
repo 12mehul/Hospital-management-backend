@@ -8,7 +8,7 @@ const {
 const router = express.Router();
 
 router.route("/").post(registration);
-router.route("/").get(getAllPatients);
-router.route("/search").get(searchPatient);
+router.route("/").get(authMiddleware, getAllPatients);
+router.route("/search").get(authMiddleware, searchPatient);
 
 module.exports = router;

@@ -5,6 +5,6 @@ const router = express.Router();
 
 router.route("/login").post(login);
 router.route("/profile").get(authMiddleware, getProfile);
-router.route("/update/:id").put(updateProfile);
+router.route("/update").put(authMiddleware, updateProfile);
 
 module.exports = router;
