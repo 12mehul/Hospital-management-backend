@@ -4,6 +4,6 @@ const { registration, getAllDoctors } = require("../controllers/doctors");
 const router = express.Router();
 
 router.route("/").post(registration);
-router.route("/").get(getAllDoctors);
+router.route("/").get(authMiddleware, getAllDoctors);
 
 module.exports = router;

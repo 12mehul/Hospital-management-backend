@@ -3,9 +3,10 @@ const {
   bookAppointment,
   getAppointments,
 } = require("../controllers/appointments");
+const authMiddleware = require("../middlewares/auth.middleware");
 const router = express.Router();
 
-router.route("/").post(bookAppointment);
-router.route("/").get(getAppointments);
+router.route("/").post(authMiddleware, bookAppointment);
+router.route("/").get(authMiddleware, getAppointments);
 
 module.exports = router;

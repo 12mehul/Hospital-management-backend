@@ -90,9 +90,9 @@ const getProfile = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { _id } = req.user;
 
-    const user = await Account.findOne({ userId: id });
+    const user = await Account.findOne({ userId: _id });
     if (!user) {
       return res.status(404).json({ msg: "User not found" });
     }
@@ -106,14 +106,14 @@ const updateProfile = async (req, res) => {
 
     if (user.role === "patient") {
       const patient = await Patient.findOneAndUpdate(
-        { _id: id },
+        { _id: _id },
         { ...req.body, password: hashedPassword },
         { new: true, runValidators: true }
       );
       data = patient;
     } else if (user.role === "doctor") {
       const doctor = await Doctor.findOneAndUpdate(
-        { _id: id },
+        { _id: _id },
         { ...req.body, password: hashedPassword },
         { new: true, runValidators: true }
       );
