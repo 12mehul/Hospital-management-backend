@@ -38,7 +38,7 @@ app.use(express.json());
 // Serve Swagger documentation
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
-app.get("/node", (req, res) => res.send("Hello World"));
+app.get("/node", (req, res) => res.send("Hello Hospital Management App"));
 app.use("/api/accounts", accounts);
 app.use("/api/patients", patients);
 app.use("/api/doctors", doctors);
