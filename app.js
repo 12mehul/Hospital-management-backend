@@ -23,14 +23,17 @@ const appointments = require("./routes/appointments");
 //   await slotsDateUpdate(); // Runs at 12:00 AM every day.
 // });
 
-app.use(express.json());
 // allow cors requests from any origin and with credentials
 app.use(
   cors({
-    origin: (origin, callback) => callback(null, true),
-    credentials: true,
+    origin: "*", // Allow all origins
+    credentials: true, // Allow credentials
+    methods: "GET,POST,PUT,DELETE,OPTIONS",
+    allowedHeaders: "X-Requested-With, Content-Type, Authorization",
   })
 );
+
+app.use(express.json());
 
 // Serve Swagger documentation
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
