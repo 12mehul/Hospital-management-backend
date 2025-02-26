@@ -26,7 +26,13 @@ const appointments = require("./routes/appointments");
 // allow cors requests from any origin and with credentials
 app.use(
   cors({
-    origin: "*", // Allow all origins
+    origin: (origin, callback) => {
+      if (!origin) {
+        // Allow non-browser requests (e.g., Postman, Server-to-Server)
+        return callback(null, true);
+      }
+      callback(null, origin); // Allow all origins dynamically
+    },
     credentials: true, // Allow credentials
     methods: "GET,POST,PUT,DELETE,OPTIONS",
     allowedHeaders: "X-Requested-With, Content-Type, Authorization",
