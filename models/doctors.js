@@ -23,11 +23,13 @@ const doctorSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  specializationId: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: "Speciality",
-  },
+  specializationId: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "Speciality",
+    },
+  ],
   experience: {
     type: String,
     required: true,
@@ -43,6 +45,9 @@ const doctorSchema = new mongoose.Schema({
   gender: {
     type: String,
     required: true,
+  },
+  fees: {
+    type: Number,
   },
   fullAddress: {
     addressLine: {
