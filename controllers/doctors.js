@@ -72,7 +72,10 @@ const registration = async (req, res) => {
 const getAllDoctors = async (req, res) => {
   try {
     const { specializationId } = req.query;
-    const query = specializationId ? { specializationId } : {};
+    const query = specializationId
+      ? { specializationId: { $in: [specializationId] } }
+      : {};
+    // Fetch doctors, apply query, exclude password, and populate specializationId
     const doctors = await Doctor.find(query, { password: 0 }).populate({
       path: "specializationId",
       select: "_id title",
